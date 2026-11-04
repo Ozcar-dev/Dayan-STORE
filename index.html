@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fbf6ec" />
+    <meta
+      name="description"
+      content="The Dayan Store: women's fashion, bags and accessories in Lagos. Order easily on WhatsApp."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Dayan Store" />
+    <meta property="og:title" content="The Dayan Store | More than looks" />
+    <meta
+      property="og:description"
+      content="Women's fashion, bags and accessories. Order easily on WhatsApp."
+    />
+
+    <title>The Dayan Store</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        background: #fbf6ec;
+      }
+      .dark body {
+        background: #241a14;
+      }
+      .boot {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .boot-bar,
+      .boot-block {
+        background: #efe4d0;
+        border-radius: 0.75rem;
+        animation: boot-pulse 1.6s ease-in-out infinite;
+      }
+      .dark .boot-bar,
+      .dark .boot-block {
+        background: #3a2b21;
+      }
+      .boot-bar {
+        height: 2.5rem;
+      }
+      .boot-hero {
+        height: 14rem;
+        margin-top: 1.5rem;
+      }
+      .boot-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .boot-card {
+        aspect-ratio: 3 / 4;
+      }
+      @media (min-width: 768px) {
+        .boot-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @keyframes boot-pulse {
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot" role="status" aria-label="Loading">
+        <div class="boot-bar"></div>
+        <div class="boot-block boot-hero"></div>
+        <div class="boot-grid">
+          <div class="boot-block boot-card"></div>
+          <div class="boot-block boot-card"></div>
+          <div class="boot-block boot-card"></div>
+          <div class="boot-block boot-card"></div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

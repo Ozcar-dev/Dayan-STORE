@@ -1,0 +1,1 @@
+export const PAGE_LOADER_MS = 800
