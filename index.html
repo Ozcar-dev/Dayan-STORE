@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#fbf6ec" />
+    <meta name="theme-color" content="#fff4ec" />
     <meta
       name="description"
       content="The Dayan Store: women's fashion, bags and accessories in Lagos. Order easily on WhatsApp."
@@ -27,13 +27,13 @@
       rel="stylesheet"
     />
 
-    <style>
+        <style>
       body {
         margin: 0;
-        background: #fbf6ec;
+        background: var(--background, #fff4ec);
       }
       .dark body {
-        background: #241a14;
+        background: var(--background, #2a1a1d);
       }
       .boot {
         max-width: 72rem;
@@ -42,13 +42,13 @@
       }
       .boot-bar,
       .boot-block {
-        background: #efe4d0;
+        background: var(--muted, #f7dcd3);
         border-radius: 0.75rem;
         animation: boot-pulse 1.6s ease-in-out infinite;
       }
       .dark .boot-bar,
       .dark .boot-block {
-        background: #3a2b21;
+        background: var(--muted, #3f2a31);
       }
       .boot-bar {
         height: 2.5rem;

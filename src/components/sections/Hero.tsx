@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Camera, Clock, Truck } from 'lucide-react'
+import { StitchCircle } from '@/components/ui/StitchCircle'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import { DELIVERY } from '@/constants/delivery'
 import { SITE } from '@/constants/site'
@@ -7,14 +8,11 @@ import { SITE } from '@/constants/site'
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-secondary">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/30" />
-      <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-primary/10" />
+      <StitchCircle className="-right-28 -top-28 h-104 w-104 bg-accent/35 sm:h-128 sm:w-lg" />
+      <StitchCircle className="-bottom-28 -left-20 h-80 w-80 bg-primary/10 sm:h-96 sm:w-96" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
-        <p className="text-sm font-bold uppercase tracking-wide text-primary">
-          {SITE.name}
-        </p>
-        <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+      <div className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-24">
+        <h1 className="max-w-2xl text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl">
           {SITE.tagline}
         </h1>
         <p className="mt-4 max-w-xl text-lg text-muted-foreground">

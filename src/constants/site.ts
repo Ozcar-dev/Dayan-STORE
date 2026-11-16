@@ -7,3 +7,5 @@ export const SITE = {
   hours: 'Monday to Sunday, 8am to 10pm',
   newsletterEndpoint: 'REPLACE_ME',
 }
+
+export const OWNER_PATH = '/studio'

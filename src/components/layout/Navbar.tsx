@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Heart, Menu, X } from 'lucide-react'
+import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
+import { useBasket } from '@/hooks/use-basket'
 import { useWishlist } from '@/hooks/use-wishlist'
 import { cn, getWhatsAppLink } from '@/lib/utils'
 import { SITE } from '@/constants/site'
@@ -12,9 +13,13 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive && 'bg-secondary text-primary',
   )
 
+const badgeClass =
+  'absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground'
+
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const { ids } = useWishlist()
+  const { count } = useBasket()
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
@@ -35,7 +40,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Link
             to="/wishlist"
             aria-label={`Wishlist, ${ids.length} saved`}
@@ -43,11 +48,17 @@ export function Navbar() {
             className="relative rounded-full p-2 hover:bg-secondary"
           >
             <Heart size={24} />
-            {ids.length > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">
-                {ids.length}
-              </span>
-            )}
+            {ids.length > 0 && <span className={badgeClass}>{ids.length}</span>}
+          </Link>
+
+          <Link
+            to="/basket"
+            aria-label={`Basket, ${count} items`}
+            onClick={() => setOpen(false)}
+            className="relative rounded-full p-2 hover:bg-secondary"
+          >
+            <ShoppingBag size={24} />
+            {count > 0 && <span className={badgeClass}>{count}</span>}
           </Link>
 
           <a

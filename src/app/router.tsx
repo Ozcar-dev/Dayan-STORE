@@ -1,13 +1,15 @@
 import { Suspense } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import { PageGate } from "@/components/layout/PageGate";
+import { RequireOwner } from "@/components/layout/RequireOwner";
 import { RootLayout } from "@/components/layout/RootLayout";
-import { PageGate } from '@/components/layout/PageGate'
 import { ContentPageSkeleton } from "@/components/sections/ContentPageSkeleton";
+import { HomeSkeleton } from "@/components/sections/HomeSkeleton";
 import { ProductDetailSkeleton } from "@/components/sections/ProductDetailSkeleton";
 import { ShopSkeleton } from "@/components/sections/ShopSkeleton";
+import { OWNER_PATH } from "@/constants/site";
 import { lazyPage } from "@/lib/lazy-page";
-import { HomeSkeleton } from "@/components/sections/HomeSkeleton";
 import NotFound from "@/pages/NotFound";
 
 const Home = lazyPage(() => import("@/pages/Home"));
@@ -20,6 +22,8 @@ const Delivery = lazyPage(() => import("@/pages/Delivery"));
 const Reviews = lazyPage(() => import("@/pages/Reviews"));
 const CustomOrder = lazyPage(() => import("@/pages/CustomOrder"));
 const Wishlist = lazyPage(() => import("@/pages/Wishlist"));
+const Studio = lazyPage(() => import("@/pages/Studio"));
+const Basket = lazyPage(() => import("@/pages/Basket"));
 
 // The key makes each route its own loading boundary, so its skeleton always shows.
 function page(
@@ -33,7 +37,7 @@ function page(
         <Page />
       </PageGate>
     </Suspense>
-  )
+  );
 }
 
 export const router = createBrowserRouter([
@@ -113,6 +117,25 @@ export const router = createBrowserRouter([
         path: "wishlist",
         element: page("wishlist", Wishlist),
         handle: { title: "Wishlist" },
+      },
+      {
+        path: "basket",
+        element: page("basket", Basket),
+        handle: { title: "Basket" },
+      },
+      {
+        element: <RequireOwner />,
+        children: [
+          {
+            path: OWNER_PATH.slice(1),
+            element: (
+              <Suspense key="studio" fallback={<ContentPageSkeleton />}>
+                <Studio />
+              </Suspense>
+            ),
+            handle: { title: "Studio" },
+          },
+        ],
       },
       { path: "*", element: <NotFound />, handle: { title: "Page not found" } },
     ],

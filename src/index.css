@@ -7,49 +7,49 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #fbf6ec;
-  --foreground: #3b2a20;
-  --card: #fffdf8;
-  --card-foreground: #3b2a20;
-  --popover: #fffdf8;
-  --popover-foreground: #3b2a20;
-  --primary: #7a4a2b;
-  --primary-foreground: #fbf6ec;
-  --secondary: #f1e6d3;
-  --secondary-foreground: #3b2a20;
-  --muted: #efe4d0;
-  --muted-foreground: #7b685a;
-  --accent: #c98b4b;
-  --accent-foreground: #3b2a20;
-  --destructive: #7a4a2b;
-  --border: #e6d8c3;
-  --input: #e6d8c3;
-  --ring: #c98b4b;
-  --whatsapp: #25d366;
-  --whatsapp-foreground: #0b2e17;
+  --background: #fff4ec;
+  --foreground: #4b2d33;
+  --card: #fffaf6;
+  --card-foreground: #4b2d33;
+  --popover: #fffaf6;
+  --popover-foreground: #4b2d33;
+  --primary: #ad2e56;
+  --primary-foreground: #fffaf6;
+  --secondary: #fce6e0;
+  --secondary-foreground: #4b2d33;
+  --muted: #f7dcd3;
+  --muted-foreground: #7d5c5f;
+  --accent: #f2b56b;
+  --accent-foreground: #4b2d33;
+  --destructive: #ad2e56;
+  --border: #efcfc4;
+  --input: #efcfc4;
+  --ring: #d9708f;
+  --whatsapp: #3a7d58;
+  --whatsapp-foreground: #fffaf6;
 }
 
 .dark {
-  --background: #241a14;
+  --background: #2a1a1d;
   --foreground: #f5ecdd;
-  --card: #2e221a;
+  --card: #35232a;
   --card-foreground: #f5ecdd;
-  --popover: #2e221a;
+  --popover: #35232a;
   --popover-foreground: #f5ecdd;
-  --primary: #d9a36a;
-  --primary-foreground: #241a14;
-  --secondary: #3a2b21;
+  --primary: #e0a0ae;
+  --primary-foreground: #2a1a1d;
+  --secondary: #3f2a31;
   --secondary-foreground: #f5ecdd;
-  --muted: #3a2b21;
-  --muted-foreground: #bfae9a;
-  --accent: #c98b4b;
-  --accent-foreground: #241a14;
-  --destructive: #d9a36a;
-  --border: #4a382b;
-  --input: #4a382b;
-  --ring: #d9a36a;
-  --whatsapp: #25d366;
-  --whatsapp-foreground: #0b2e17;
+  --muted: #3f2a31;
+  --muted-foreground: #c9b5b0;
+  --accent: #cf9b4f;
+  --accent-foreground: #2a1a1d;
+  --destructive: #e0a0ae;
+  --border: #5a4048;
+  --input: #5a4048;
+  --ring: #e0a0ae;
+  --whatsapp: #3f8a5f;
+  --whatsapp-foreground: #0e2a1b;
 }
 
 @theme inline {

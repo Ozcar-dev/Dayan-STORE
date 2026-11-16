@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom'
+import { PriceTag } from '@/components/ui/PriceTag'
 import { ProductImage } from '@/components/ui/ProductImage'
 import { StockBadge } from '@/components/ui/StockBadge'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import { WishlistButton } from '@/components/ui/WishlistButton'
 import { formatPrice } from '@/lib/utils'
 import type { Product } from '@/types'
+import { thumbUrl } from '@/lib/image-url'
+
+
 
 export function ProductCard({ product }: { product: Product }) {
   const soldOut = product.stock === 'sold-out'
@@ -17,7 +21,7 @@ export function ProductCard({ product }: { product: Product }) {
         <Link to={link} className="group block">
           <div className="relative aspect-3/4 w-full overflow-hidden bg-muted">
             <ProductImage
-              src={product.images[0]}
+              src={thumbUrl(product.images[0])}
               alt={product.name}
               className="h-full w-full object-cover group-hover:scale-105"
             />
@@ -31,22 +35,23 @@ export function ProductCard({ product }: { product: Product }) {
           productId={product.id}
           className="absolute right-3 top-3"
         />
+
+        <PriceTag
+          price={product.price}
+          muted={soldOut}
+          className="absolute -bottom-9 right-3 z-10"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="min-w-0">
-          <Link
-            to={link}
-            className="line-clamp-2 font-heading font-semibold hover:text-primary"
-          >
-            {product.name}
-          </Link>
-          <p className="mt-1 font-semibold text-primary">
-            {formatPrice(product.price)}
-          </p>
-        </div>
+        <Link
+          to={link}
+          className="line-clamp-2 min-w-0 pr-24 font-heading font-semibold hover:text-primary"
+        >
+          {product.name}
+        </Link>
 
-        <div className="mt-auto">
+        <div className="mt-auto pt-2">
           {soldOut ? (
             <p className="rounded-full bg-muted px-5 py-2.5 text-center text-sm font-semibold text-muted-foreground">
               Sold out

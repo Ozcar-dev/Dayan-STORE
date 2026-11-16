@@ -1,29 +1,79 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ShoppingBag } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { OptionChips } from '@/components/ui/OptionChips'
+import { QuantityStepper } from '@/components/ui/QuantityStepper'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import { CATEGORIES } from '@/constants/categories'
+import { useBasket } from '@/hooks/use-basket'
+import { MAX_LINES } from '@/lib/basket'
 import { formatPrice } from '@/lib/utils'
 import type { Product } from '@/types'
 
 export function ProductInfo({ product }: { product: Product }) {
+  const { add } = useBasket()
   const [size, setSize] = useState<string | null>(
     product.sizes.length === 1 ? product.sizes[0] : null,
   )
   const [colour, setColour] = useState<string | null>(
     product.colours.length === 1 ? product.colours[0] : null,
   )
+  const [quantity, setQuantity] = useState(1)
+  const [notice, setNotice] = useState('')
+  const [error, setError] = useState('')
 
   const categoryName =
     CATEGORIES.find((item) => item.slug === product.category)?.name ?? ''
   const soldOut = product.stock === 'sold-out'
+  const hasColours = product.colours.length > 0
+
+  const chooseSize = (value: string) => {
+    setSize(value)
+    setError('')
+    setNotice('')
+  }
+
+  const chooseColour = (value: string) => {
+    setColour(value)
+    setError('')
+    setNotice('')
+  }
+
+  const handleAdd = () => {
+    const missing = [!size && 'a size', hasColours && !colour && 'a colour']
+      .filter(Boolean)
+      .join(' and ')
+
+    if (missing) {
+      setNotice('')
+      setError(`Please choose ${missing}.`)
+      return
+    }
+
+    const added = add(
+      { productId: product.id, size: size ?? '', colour: colour ?? '' },
+      quantity,
+    )
+
+    if (!added) {
+      setNotice('')
+      setError(
+        `Your basket is full (${MAX_LINES} different items). Send this order first.`,
+      )
+      return
+    }
+
+    setError('')
+    setNotice('Added to your basket.')
+  }
 
   const details = [size && `size ${size}`, colour && `colour ${colour}`]
     .filter(Boolean)
     .join(', ')
 
   const orderMessage = [
-    `Hello, I'm interested in the ${product.name} (${formatPrice(product.price)})${details ? `, ${details}` : ''}. Is it available?`,
+    `Hello, I'm interested in the ${product.name} (${formatPrice(product.price)})${details ? `, ${details}` : ''}${quantity > 1 ? `, quantity ${quantity}` : ''}. Is it available?`,
     window.location.href,
   ].join('\n')
 
@@ -55,7 +105,7 @@ export function ProductInfo({ product }: { product: Product }) {
               label="Size"
               options={product.sizes}
               value={size}
-              onChange={setSize}
+              onChange={chooseSize}
             />
             <Link
               to="/size-guide"
@@ -65,12 +115,23 @@ export function ProductInfo({ product }: { product: Product }) {
             </Link>
           </div>
 
-          <OptionChips
-            label="Colour"
-            options={product.colours}
-            value={colour}
-            onChange={setColour}
-          />
+          {hasColours && (
+            <OptionChips
+              label="Colour"
+              options={product.colours}
+              value={colour}
+              onChange={chooseColour}
+            />
+          )}
+
+          <div>
+            <p className="mb-2 text-sm font-semibold">Quantity</p>
+            <QuantityStepper
+              label="Quantity"
+              value={quantity}
+              onChange={setQuantity}
+            />
+          </div>
         </div>
       )}
 
@@ -87,11 +148,36 @@ export function ProductInfo({ product }: { product: Product }) {
             />
           </>
         ) : (
-          <WhatsAppButton
-            message={orderMessage}
-            className="w-full sm:w-auto"
-          />
+          <>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button size="lg" onClick={handleAdd} className="w-full sm:w-auto">
+                <ShoppingBag size={18} />
+                Add to basket
+              </Button>
+              <WhatsAppButton
+                message={orderMessage}
+                label="Order this on WhatsApp"
+                className="w-full sm:w-auto"
+              />
+            </div>
+
+            {error && (
+              <p role="alert" className="text-sm font-semibold text-primary">
+                {error}
+              </p>
+            )}
+
+            {notice && (
+              <p role="status" className="text-sm font-semibold text-primary">
+                {notice}{' '}
+                <Link to="/basket" className="underline underline-offset-4">
+                  View basket
+                </Link>
+              </p>
+            )}
+          </>
         )}
+
         <p className="text-sm text-muted-foreground">
           We reply on WhatsApp from 8am to 10pm, every day.
         </p>

@@ -48,3 +48,10 @@ export interface Review {
   name: string
   text: string
 }
+
+export interface BasketLine {
+  productId: string
+  size: string
+  colour: string
+  quantity: number
+}

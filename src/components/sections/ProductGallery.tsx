@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { PriceTag } from '@/components/ui/PriceTag'
 import { ProductImage } from '@/components/ui/ProductImage'
 import { StockBadge } from '@/components/ui/StockBadge'
 import { WishlistButton } from '@/components/ui/WishlistButton'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types'
+import { thumbUrl } from '@/lib/image-url'
+
 
 export function ProductGallery({ product }: { product: Product }) {
   const [active, setActive] = useState(0)
@@ -25,6 +28,12 @@ export function ProductGallery({ product }: { product: Product }) {
           productId={product.id}
           className="absolute right-3 top-3"
         />
+        <PriceTag
+          price={product.price}
+          hidden
+          muted={product.stock === 'sold-out'}
+          className="absolute bottom-3 right-3"
+        />
       </div>
 
       {product.images.length > 1 && (
@@ -41,7 +50,7 @@ export function ProductGallery({ product }: { product: Product }) {
               )}
             >
               <ProductImage
-                src={src}
+                src={thumbUrl(src)}
                 alt=""
                 iconSize={20}
                 className="h-full w-full object-cover"

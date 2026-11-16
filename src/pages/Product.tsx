@@ -3,13 +3,15 @@ import { ArrowLeft } from 'lucide-react'
 import { ProductDetailSkeleton } from '@/components/sections/ProductDetailSkeleton'
 import { ProductGallery } from '@/components/sections/ProductGallery'
 import { ProductInfo } from '@/components/sections/ProductInfo'
+import { ProductsError } from '@/components/sections/ProductsError'
 import { ProductCard } from '@/components/ui/ProductCard'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { useProducts } from '@/hooks/use-products'
 
 export default function Product() {
   const { productId } = useParams()
-  const { products, getProductById, isLoading } = useProducts()
+  const { products, getProductById, isLoading, isError, refetch } =
+    useProducts()
   const product = productId ? getProductById(productId) : undefined
 
   useDocumentTitle(
@@ -17,6 +19,14 @@ export default function Product() {
   )
 
   if (isLoading) return <ProductDetailSkeleton />
+
+  if (isError) {
+    return (
+      <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+        <ProductsError onRetry={() => void refetch()} />
+      </section>
+    )
+  }
 
   if (!product) {
     return (
