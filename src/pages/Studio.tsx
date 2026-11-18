@@ -113,7 +113,7 @@ export default function Studio() {
 
   return (
     <>
-      <PageHeader title="Studio" subtitle="Manage your shop." />
+      <PageHeader title="Admin" subtitle="Manage your shop." />
 
       <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

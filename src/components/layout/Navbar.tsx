@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Heart, Menu, ShoppingBag, X } from 'lucide-react'
-import { useBasket } from '@/hooks/use-basket'
+import { Heart, Menu, ShoppingCart } from 'lucide-react'
+import { MobileSidebar } from '@/components/layout/MobileSidebar'
+import { useCart } from '@/hooks/use-cart'
 import { useWishlist } from '@/hooks/use-wishlist'
 import { cn, getWhatsAppLink } from '@/lib/utils'
 import { SITE } from '@/constants/site'
@@ -19,93 +20,72 @@ const badgeClass =
 export function Navbar() {
   const [open, setOpen] = useState(false)
   const { ids } = useWishlist()
-  const { count } = useBasket()
+  const { count } = useCart()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link
-          to="/"
-          onClick={() => setOpen(false)}
-          className="min-w-0 truncate font-heading text-xl font-semibold text-primary"
-        >
-          {SITE.name}
-        </Link>
+    <>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-1">
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="-ml-2 rounded-full p-2 hover:bg-secondary lg:hidden"
+            >
+              <Menu size={24} />
+            </button>
+            <Link
+              to="/"
+              className="min-w-0 truncate font-heading text-xl font-semibold text-primary"
+            >
+              {SITE.name}
+            </Link>
+          </div>
 
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} className={linkClass}>
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-1 sm:gap-2">
-          <Link
-            to="/wishlist"
-            aria-label={`Wishlist, ${ids.length} saved`}
-            onClick={() => setOpen(false)}
-            className="relative rounded-full p-2 hover:bg-secondary"
-          >
-            <Heart size={24} />
-            {ids.length > 0 && <span className={badgeClass}>{ids.length}</span>}
-          </Link>
-
-          <Link
-            to="/basket"
-            aria-label={`Basket, ${count} items`}
-            onClick={() => setOpen(false)}
-            className="relative rounded-full p-2 hover:bg-secondary"
-          >
-            <ShoppingBag size={24} />
-            {count > 0 && <span className={badgeClass}>{count}</span>}
-          </Link>
-
-          <a
-            href={getWhatsAppLink('Hello, I would like to make an enquiry.')}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-whatsapp-foreground sm:inline-block"
-          >
-            Chat on WhatsApp
-          </a>
-
-          <button
-            type="button"
-            aria-label="Toggle menu"
-            aria-expanded={open}
-            onClick={() => setOpen((value) => !value)}
-            className="rounded-full p-2 hover:bg-secondary lg:hidden"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </div>
-
-      {open && (
-        <nav className="border-t border-border bg-background lg:hidden">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-3 sm:px-6">
+          <nav className="hidden items-center gap-1 lg:flex">
             {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className={linkClass}
-              >
+              <NavLink key={link.to} to={link.to} className={linkClass}>
                 {link.label}
               </NavLink>
             ))}
+          </nav>
+
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link
+              to="/wishlist"
+              aria-label={`Wishlist, ${ids.length} saved`}
+              className="relative rounded-full p-2 hover:bg-secondary"
+            >
+              <Heart size={24} />
+              {ids.length > 0 && (
+                <span className={badgeClass}>{ids.length}</span>
+              )}
+            </Link>
+
+            <Link
+              to="/cart"
+              aria-label={`Cart, ${count} items`}
+              className="relative rounded-full p-2 hover:bg-secondary"
+            >
+              <ShoppingCart size={24} />
+              {count > 0 && <span className={badgeClass}>{count}</span>}
+            </Link>
+
             <a
               href={getWhatsAppLink('Hello, I would like to make an enquiry.')}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 rounded-full bg-whatsapp px-4 py-2 text-center text-sm font-semibold text-whatsapp-foreground sm:hidden"
+              className="hidden rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-whatsapp-foreground sm:inline-block"
             >
               Chat on WhatsApp
             </a>
           </div>
-        </nav>
-      )}
-    </header>
+        </div>
+      </header>
+
+      <MobileSidebar open={open} onClose={() => setOpen(false)} />
+    </>
   )
 }

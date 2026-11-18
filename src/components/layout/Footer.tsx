@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
-import { NewsletterForm } from "@/components/sections/NewsletterForm";
-import { SocialLinks } from "@/components/ui/SocialLinks";
-import { StitchCircle } from "@/components/ui/StitchCircle";
-import { SITE } from "@/constants/site";
-import { NAV_LINKS } from "@/constants/navigation";
-import { getWhatsAppLink } from "@/lib/utils";
-import { OwnerEntry } from "@/components/ui/OwnerEntry";
+import { Link } from 'react-router-dom'
+import { NewsletterForm } from '@/components/sections/NewsletterForm'
+import { OwnerEntry } from '@/components/ui/OwnerEntry'
+import { SocialLinks } from '@/components/ui/SocialLinks'
+import { StitchCircle } from '@/components/ui/StitchCircle'
+import { SITE } from '@/constants/site'
+import { NAV_LINKS } from '@/constants/navigation'
+import { getWhatsAppLink } from '@/lib/utils'
 
 export function Footer() {
   return (
@@ -43,31 +43,34 @@ export function Footer() {
                 Wishlist
               </Link>
             </li>
-          </ul>
-        </div>
-
-        <div className="min-w-0">
-          <p className="font-heading font-semibold">Get in touch</p>
-          <ul className="mt-2 space-y-1">
             <li>
-              <a
-                href={getWhatsAppLink(
-                  "Hello, I would like to make an enquiry.",
-                )}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-primary"
-              >
-                Chat on WhatsApp
-              </a>
+              <Link to="/cart" className="hover:text-primary">
+                Cart
+              </Link>
             </li>
-            <li className="text-muted-foreground">{SITE.hours}</li>
           </ul>
         </div>
-      </div>
 
-      <div className="relative border-t border-border">
-        <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+        <div className="min-w-0 space-y-6">
+          <div>
+            <p className="font-heading font-semibold">Get in touch</p>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <a
+                  href={getWhatsAppLink(
+                    'Hello, I would like to make an enquiry.',
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary"
+                >
+                  Chat on WhatsApp
+                </a>
+              </li>
+              <li className="text-muted-foreground">{SITE.hours}</li>
+            </ul>
+          </div>
+
           <NewsletterForm />
         </div>
       </div>
@@ -77,5 +80,5 @@ export function Footer() {
         reserved.
       </div>
     </footer>
-  );
+  )
 }

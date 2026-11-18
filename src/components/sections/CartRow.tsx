@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom'
 import { ProductImage } from '@/components/ui/ProductImage'
 import { QuantityStepper } from '@/components/ui/QuantityStepper'
-import type { BasketItem } from '@/lib/basket'
+import type { CartItem } from '@/lib/cart'
 import { thumbUrl } from '@/lib/image-url'
 import { formatPrice } from '@/lib/utils'
 
-interface BasketRowProps {
-  item: BasketItem
+interface CartRowProps {
+  item: CartItem
   onQuantity: (key: string, quantity: number) => void
   onRemove: (key: string) => void
 }
 
-export function BasketRow({ item, onQuantity, onRemove }: BasketRowProps) {
+export function CartRow({ item, onQuantity, onRemove }: CartRowProps) {
   const { key, line, product } = item
 
   const details = [

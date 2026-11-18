@@ -1,31 +1,32 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingBag } from 'lucide-react'
-import { BasketRow } from '@/components/sections/BasketRow'
+import { ShoppingCart } from 'lucide-react'
+import { CartRow } from '@/components/sections/CartRow'
 import { ProductsError } from '@/components/sections/ProductsError'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
-import { useBasket } from '@/hooks/use-basket'
+import { useCart } from '@/hooks/use-cart'
 import { useProducts } from '@/hooks/use-products'
-import { buildOrderMessage, lineKey } from '@/lib/basket'
-import type { BasketItem } from '@/lib/basket'
+import { lineKey } from '@/lib/cart'
+import type { CartItem } from '@/lib/cart'
+import { buildCartMessage } from '@/lib/whatsapp-messages'
 import { formatPrice } from '@/lib/utils'
-import type { BasketLine, Product } from '@/types'
+import type { CartLine, Product } from '@/types'
 
 interface Unavailable {
   key: string
-  line: BasketLine
+  line: CartLine
   product?: Product
 }
 
-export default function Basket() {
-  const { lines, setQuantity, remove, clear } = useBasket()
+export default function Cart() {
+  const { lines, setQuantity, remove, clear } = useCart()
   const { products, isLoading, isError, refetch } = useProducts()
   const [clearing, setClearing] = useState(false)
 
-  const items: BasketItem[] = []
+  const items: CartItem[] = []
   const unavailable: Unavailable[] = []
 
   for (const line of lines) {
@@ -44,18 +45,18 @@ export default function Basket() {
     0,
   )
 
-  const message = buildOrderMessage(items, window.location.origin)
+  const message = buildCartMessage(items)
 
   return (
     <>
       <PageHeader
-        title="Your basket"
+        title="Your cart"
         subtitle="Review your items, then send your order on WhatsApp."
       />
 
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         {isLoading ? (
-          <div role="status" aria-label="Loading basket" className="space-y-3">
+          <div role="status" aria-label="Loading cart" className="space-y-3">
             {Array.from({ length: 3 }, (_, index) => (
               <Skeleton key={index} className="h-28 rounded-2xl" />
             ))}
@@ -64,12 +65,12 @@ export default function Basket() {
           <ProductsError onRetry={() => void refetch()} />
         ) : lines.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card px-4 py-12 text-center">
-            <ShoppingBag size={36} className="mx-auto text-primary" />
+            <ShoppingCart size={36} className="mx-auto text-primary" />
             <p className="mt-3 font-heading text-xl font-semibold text-primary">
-              Your basket is empty
+              Your cart is empty
             </p>
             <p className="mt-2 text-muted-foreground">
-              Choose a size on any item and tap Add to basket.
+              Choose a size on any item and tap Add to cart.
             </p>
             <Link
               to="/shop"
@@ -84,7 +85,7 @@ export default function Basket() {
               {items.length > 0 && (
                 <ul className="divide-y divide-border rounded-2xl border border-border bg-card px-4">
                   {items.map((item) => (
-                    <BasketRow
+                    <CartRow
                       key={item.key}
                       item={item}
                       onQuantity={setQuantity}
@@ -178,7 +179,7 @@ export default function Basket() {
                   variant="outline"
                   onClick={() => setClearing(true)}
                 >
-                  Clear basket
+                  Clear cart
                 </Button>
               )}
             </aside>

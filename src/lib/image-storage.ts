@@ -1,4 +1,4 @@
-import { thumbUrl } from '@/lib/image-url'
+import { shareUrl, thumbUrl } from '@/lib/image-url'
 import { prepareImage } from '@/lib/resize-image'
 import { supabase } from '@/lib/supabase'
 
@@ -13,34 +13,37 @@ function pathFromUrl(url: string): string | null {
 }
 
 export async function uploadProductPhoto(file: File): Promise<string> {
-  const { full, thumb, ext } = await prepareImage(file)
+  const { full, thumb, share, ext } = await prepareImage(file)
   const id = crypto.randomUUID()
-  const fullPath = `${id}.${ext}`
-  const thumbPath = `${id}-sm.${ext}`
   const storage = supabase.storage.from(BUCKET)
   const cacheControl = '31536000'
+  const done: string[] = []
 
-  const fullResult = await storage.upload(fullPath, full, {
-    cacheControl,
-    contentType: full.type,
-  })
-  if (fullResult.error) throw fullResult.error
+  const send = async (path: string, blob: Blob) => {
+    const { error } = await storage.upload(path, blob, {
+      cacheControl,
+      contentType: blob.type,
+    })
 
-  const thumbResult = await storage.upload(thumbPath, thumb, {
-    cacheControl,
-    contentType: thumb.type,
-  })
-  if (thumbResult.error) {
-    await storage.remove([fullPath])
-    throw thumbResult.error
+    if (error) {
+      if (done.length > 0) await storage.remove(done)
+      throw error
+    }
+
+    done.push(path)
   }
+
+  const fullPath = `${id}.${ext}`
+  await send(fullPath, full)
+  await send(`${id}-sm.${ext}`, thumb)
+  await send(`${id}-share.jpg`, share)
 
   return storage.getPublicUrl(fullPath).data.publicUrl
 }
 
 export async function deleteProductPhotos(urls: string[]) {
   const paths = urls
-    .flatMap((url) => [url, thumbUrl(url)])
+    .flatMap((url) => [url, thumbUrl(url), shareUrl(url)])
     .map((item) => (item ? pathFromUrl(item) : null))
     .filter((path): path is string => path !== null)
 

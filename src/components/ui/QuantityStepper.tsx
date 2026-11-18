@@ -1,5 +1,5 @@
 import { Minus, Plus } from 'lucide-react'
-import { MAX_QUANTITY } from '@/lib/basket'
+import { MAX_QUANTITY } from '@/lib/cart'
 
 interface QuantityStepperProps {
   value: number

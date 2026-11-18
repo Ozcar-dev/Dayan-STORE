@@ -8,4 +8,4 @@ export const SITE = {
   newsletterEndpoint: 'REPLACE_ME',
 }
 
-export const OWNER_PATH = '/studio'
+export const OWNER_PATH = '/admin'

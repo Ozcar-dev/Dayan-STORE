@@ -42,7 +42,7 @@ export function NewsletterForm() {
   return (
     <form onSubmit={handleSubmit} className="min-w-0">
       <p className="font-heading font-semibold">Get updates on new arrivals</p>
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+      <div className="mt-3 flex gap-2">
         <Input
           type="email"
           value={email}
@@ -50,7 +50,7 @@ export function NewsletterForm() {
           placeholder="Your email address"
           aria-label="Email address"
           required
-          className="sm:max-w-sm"
+          className="min-w-0 flex-1"
         />
         <Button type="submit" disabled={status === 'loading'}>
           {status === 'loading' ? 'Signing up...' : 'Sign up'}

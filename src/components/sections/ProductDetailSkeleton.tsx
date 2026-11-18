@@ -10,7 +10,7 @@ export function ProductDetailSkeleton() {
       <Skeleton className="h-5 w-28" />
 
       <div className="mt-6 grid gap-8 md:grid-cols-2 md:gap-12">
-        <Skeleton className="aspect-3/4 w-full rounded-2xl" />
+        <Skeleton className="aspect-4/5 md:aspect-square w-full rounded-2xl" />
 
         <div className="space-y-6">
           <div className="space-y-3">

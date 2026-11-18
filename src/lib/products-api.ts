@@ -1,4 +1,6 @@
+import { describeProduct } from '@/lib/describe-product'
 import { supabase } from '@/lib/supabase'
+import { capitalizeFirst } from '@/lib/text'
 import type { CategorySlug, Product, StockStatus } from '@/types'
 
 interface ProductRow {
@@ -16,10 +18,16 @@ interface ProductRow {
 function toProduct(row: ProductRow): Product {
   return {
     id: row.id,
-    name: row.name,
+    name: capitalizeFirst(row.name),
     category: row.category as CategorySlug,
     price: row.price,
-    description: row.description,
+    description:
+      row.description.trim() ||
+      describeProduct({
+        category: row.category,
+        colours: row.colours,
+        sizes: row.sizes,
+      }),
     sizes: row.sizes,
     colours: row.colours,
     images: row.images,

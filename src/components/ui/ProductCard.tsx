@@ -1,25 +1,45 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ShoppingCart } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { PriceTag } from '@/components/ui/PriceTag'
 import { ProductImage } from '@/components/ui/ProductImage'
 import { StockBadge } from '@/components/ui/StockBadge'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import { WishlistButton } from '@/components/ui/WishlistButton'
-import { formatPrice } from '@/lib/utils'
-import type { Product } from '@/types'
+import { useCart } from '@/hooks/use-cart'
 import { thumbUrl } from '@/lib/image-url'
+import { buildItemMessage } from '@/lib/whatsapp-messages'
+import type { Product } from '@/types'
 
-
+type AddStatus = 'idle' | 'added' | 'full'
 
 export function ProductCard({ product }: { product: Product }) {
+  const { add } = useCart()
+  const [status, setStatus] = useState<AddStatus>('idle')
+
   const soldOut = product.stock === 'sold-out'
   const link = `/shop/${product.id}`
-  const message = `Hello, I'm interested in the ${product.name} (${formatPrice(product.price)}). Is it available?`
+  const quickAdd = product.sizes.length === 1 && product.colours.length <= 1
+  const message = buildItemMessage({ product })
+
+  const handleAdd = () => {
+    const added = add(
+      {
+        productId: product.id,
+        size: product.sizes[0],
+        colour: product.colours[0] ?? '',
+      },
+      1,
+    )
+    setStatus(added ? 'added' : 'full')
+  }
 
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground">
       <div className="relative">
         <Link to={link} className="group block">
-          <div className="relative aspect-3/4 w-full overflow-hidden bg-muted">
+          <div className="relative aspect-5/5 w-full overflow-hidden bg-muted">
             <ProductImage
               src={thumbUrl(product.images[0])}
               alt={product.name}
@@ -44,20 +64,60 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <Link
-          to={link}
-          className="line-clamp-2 min-w-0 pr-24 font-heading font-semibold hover:text-primary"
-        >
-          {product.name}
-        </Link>
+        <div className="min-w-0">
+          <Link
+            to={link}
+            className="line-clamp-2 pr-24 font-heading font-semibold hover:text-primary"
+          >
+            {product.name}
+          </Link>
+          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+            {product.description}
+          </p>
+        </div>
 
-        <div className="mt-auto pt-2">
+        <div className="mt-auto space-y-2 pt-2">
           {soldOut ? (
             <p className="rounded-full bg-muted px-5 py-2.5 text-center text-sm font-semibold text-muted-foreground">
               Sold out
             </p>
           ) : (
-            <WhatsAppButton message={message} className="w-full" />
+            <>
+              {quickAdd ? (
+                <Button className="w-full" onClick={handleAdd}>
+                  <ShoppingCart size={18} />
+                  Add to cart
+                </Button>
+              ) : (
+                <Link
+                  to={link}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  Choose options
+                </Link>
+              )}
+
+              <WhatsAppButton
+                message={message}
+                label="Order on WhatsApp"
+                className="w-full"
+              />
+
+              {status === 'added' && (
+                <p role="status" className="text-sm font-semibold text-primary">
+                  Added.{' '}
+                  <Link to="/cart" className="underline underline-offset-4">
+                    View cart
+                  </Link>
+                </p>
+              )}
+
+              {status === 'full' && (
+                <p role="alert" className="text-sm font-semibold text-primary">
+                  Your cart is full. Send this order first.
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

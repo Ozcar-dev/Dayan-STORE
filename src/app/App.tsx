@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { AuthProvider } from '@/context/auth-provider'
-import { BasketProvider } from '@/context/basket-provider'
+import { CartProvider } from '@/context/cart-provider'
 import { WishlistProvider } from '@/context/wishlist-provider'
 import { router } from '@/app/router'
 
@@ -20,9 +20,9 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <WishlistProvider>
-          <BasketProvider>
+          <CartProvider>
             <RouterProvider router={router} />
-          </BasketProvider>
+          </CartProvider>
         </WishlistProvider>
       </AuthProvider>
     </QueryClientProvider>

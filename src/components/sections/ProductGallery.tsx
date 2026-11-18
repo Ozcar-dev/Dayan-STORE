@@ -13,7 +13,7 @@ export function ProductGallery({ product }: { product: Product }) {
 
   return (
     <div className="min-w-0 space-y-3">
-      <div className="relative aspect-3/4 w-full overflow-hidden rounded-2xl border border-border bg-muted">
+      <div className="relative aspect-5/5 md:aspect-square w-full overflow-hidden rounded-2xl border border-border bg-muted">
         <ProductImage
           src={product.images[active]}
           alt={product.name}

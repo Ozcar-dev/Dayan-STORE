@@ -23,7 +23,7 @@ const Reviews = lazyPage(() => import("@/pages/Reviews"));
 const CustomOrder = lazyPage(() => import("@/pages/CustomOrder"));
 const Wishlist = lazyPage(() => import("@/pages/Wishlist"));
 const Studio = lazyPage(() => import("@/pages/Studio"));
-const Basket = lazyPage(() => import("@/pages/Basket"));
+const Cart = lazyPage(() => import("@/pages/Cart"));
 
 // The key makes each route its own loading boundary, so its skeleton always shows.
 function page(
@@ -119,9 +119,9 @@ export const router = createBrowserRouter([
         handle: { title: "Wishlist" },
       },
       {
-        path: "basket",
-        element: page("basket", Basket),
-        handle: { title: "Basket" },
+        path: "cart",
+        element: page("cart", Cart),
+        handle: { title: "Cart" },
       },
       {
         element: <RequireOwner />,
@@ -133,7 +133,7 @@ export const router = createBrowserRouter([
                 <Studio />
               </Suspense>
             ),
-            handle: { title: "Studio" },
+            handle: { title: "Admin" },
           },
         ],
       },

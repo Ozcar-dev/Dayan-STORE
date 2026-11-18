@@ -49,7 +49,7 @@ export interface Review {
   text: string
 }
 
-export interface BasketLine {
+export interface CartLine {
   productId: string
   size: string
   colour: string

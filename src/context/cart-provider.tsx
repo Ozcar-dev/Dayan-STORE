@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { BasketContext } from '@/context/basket-context'
-import { MAX_LINES, clampQuantity, lineKey } from '@/lib/basket'
-import type { BasketLine } from '@/types'
+import { CartContext } from '@/context/cart-context'
+import { MAX_LINES, clampQuantity, lineKey } from '@/lib/cart'
+import type { CartLine } from '@/types'
 
-const STORAGE_KEY = 'dayan-basket'
+const STORAGE_KEY = 'dayan-cart'
 
-function isLine(value: unknown): value is BasketLine {
+function isLine(value: unknown): value is CartLine {
   if (!value || typeof value !== 'object') return false
   const item = value as Record<string, unknown>
 
@@ -19,7 +19,7 @@ function isLine(value: unknown): value is BasketLine {
   )
 }
 
-function readSaved(): BasketLine[] {
+function readSaved(): CartLine[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     const parsed: unknown = raw ? JSON.parse(raw) : []
@@ -34,20 +34,20 @@ function readSaved(): BasketLine[] {
   }
 }
 
-export function BasketProvider({ children }: { children: ReactNode }) {
-  const [lines, setLines] = useState<BasketLine[]>(readSaved)
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [lines, setLines] = useState<CartLine[]>(readSaved)
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(lines))
     } catch {
-      // Storage can be blocked (private mode). The basket still works for this visit.
+      // Storage can be blocked (private mode). The cart still works for this visit.
     }
   }, [lines])
 
   const add = useCallback(
     (
-      line: Pick<BasketLine, 'productId' | 'size' | 'colour'>,
+      line: Pick<CartLine, 'productId' | 'size' | 'colour'>,
       quantity: number,
     ) => {
       const key = lineKey(line)
@@ -97,7 +97,5 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     [lines, count, add, setQuantity, remove, clear],
   )
 
-  return (
-    <BasketContext.Provider value={value}>{children}</BasketContext.Provider>
-  )
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
