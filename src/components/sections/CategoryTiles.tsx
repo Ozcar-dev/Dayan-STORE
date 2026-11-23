@@ -16,7 +16,7 @@ export function CategoryTiles({ products, loading }: CategoryTilesProps) {
     >
       <h2 className="text-3xl font-semibold text-primary">Shop by category</h2>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
         {CATEGORIES.map((category) => {
           const count = products.filter(
             (product) => product.category === category.slug,

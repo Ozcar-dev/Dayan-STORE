@@ -1,4 +1,5 @@
-import { describeProduct } from '@/lib/describe-product'
+import { generateDescription } from '@/lib/describe-product'
+import { hashString } from '@/lib/seeded'
 import { supabase } from '@/lib/supabase'
 import { capitalizeFirst } from '@/lib/text'
 import type { CategorySlug, Product, StockStatus } from '@/types'
@@ -23,10 +24,10 @@ function toProduct(row: ProductRow): Product {
     price: row.price,
     description:
       row.description.trim() ||
-      describeProduct({
+      generateDescription({
         category: row.category,
         colours: row.colours,
-        sizes: row.sizes,
+        seed: hashString(row.id),
       }),
     sizes: row.sizes,
     colours: row.colours,

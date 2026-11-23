@@ -1,10 +1,9 @@
 import type { Category } from '@/types'
 
 export const CATEGORIES: Category[] = [
-  { slug: 'party-event', name: 'Party / Event' },
-  { slug: 'casual', name: 'Casual' },
+  { slug: 'dress', name: 'Dress' },
   { slug: 'jeans', name: 'Jeans' },
-  { slug: 'tops', name: 'Tops' },
-  { slug: 'two-piece-jumpsuit', name: 'Two Piece & Jumpsuit' },
+  { slug: 'two-piece', name: 'Two Piece' },
   { slug: 'bags', name: 'Bags' },
+  { slug: 'tops', name: 'Tops' },
 ]

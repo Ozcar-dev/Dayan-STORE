@@ -119,3 +119,27 @@
     }
   }
 }
+
+
+@theme {
+  --animate-note-in: note-in 700ms ease-out both;
+  --animate-note-out: note-out 700ms ease-in both;
+
+  @keyframes note-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes note-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}

@@ -22,7 +22,7 @@ export function ProductImage({
 
   if (!src || failedSrc === src) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
         <ImageIcon size={iconSize} />
       </div>
     )

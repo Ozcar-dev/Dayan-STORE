@@ -6,6 +6,9 @@ export const SITE = {
   tiktokUrl: 'https://tiktok.com/@REPLACE_ME',
   hours: 'Monday to Sunday, 8am to 10pm',
   newsletterEndpoint: 'REPLACE_ME',
+  phone: '+2348163057583',
 }
 
 export const OWNER_PATH = '/admin'
+
+export const SHOW_RATINGS = true

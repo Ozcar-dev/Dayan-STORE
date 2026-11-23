@@ -34,9 +34,9 @@ export function ShopFilters({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="relative min-w-0 flex-1 md:max-w-md">
+    <div className="space-y-3 lg:space-y-0">
+      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+        <div className="relative min-w-0 flex-1 lg:w-124 lg:flex-none">
           <Search
             size={18}
             className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -67,7 +67,7 @@ export function ShopFilters({
           aria-controls="shop-filter-panel"
           onClick={() => setOpen((value) => !value)}
           className={cn(
-            'inline-flex h-12 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors',
+            'inline-flex h-12 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors lg:hidden',
             open || category
               ? 'border-primary bg-primary text-primary-foreground'
               : 'border-border bg-card hover:bg-secondary',
@@ -81,12 +81,36 @@ export function ShopFilters({
             </span>
           )}
         </button>
+
+        <div
+          role="group"
+          aria-label="Categories"
+          className="hidden min-w-0 flex-wrap gap-2 lg:flex"
+        >
+          <button
+            type="button"
+            onClick={() => onCategoryChange(null)}
+            className={chipClass(category === null)}
+          >
+            All
+          </button>
+          {CATEGORIES.map((item) => (
+            <button
+              key={item.slug}
+              type="button"
+              onClick={() => onCategoryChange(item.slug)}
+              className={chipClass(category === item.slug)}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
       </div>
 
       {open && (
         <div
           id="shop-filter-panel"
-          className="flex flex-wrap gap-2 rounded-2xl border border-border bg-card p-3"
+          className="flex flex-wrap gap-2 rounded-2xl border border-border bg-card p-3 lg:hidden"
         >
           <button
             type="button"
@@ -112,7 +136,7 @@ export function ShopFilters({
         <button
           type="button"
           onClick={() => onCategoryChange(null)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-sm font-semibold text-primary"
+          className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-sm font-semibold text-primary lg:hidden"
         >
           {activeName}
           <X size={14} />

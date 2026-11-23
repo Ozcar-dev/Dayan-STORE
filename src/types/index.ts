@@ -1,10 +1,4 @@
-export type CategorySlug =
-  | 'party-event'
-  | 'casual'
-  | 'jeans'
-  | 'tops'
-  | 'two-piece-jumpsuit'
-  | 'bags'
+export type CategorySlug = 'dress' | 'jeans' | 'two-piece' | 'bags' | 'tops'
 
 export type StockStatus = 'in-stock' | 'limited' | 'sold-out'
 
@@ -54,4 +48,27 @@ export interface CartLine {
   size: string
   colour: string
   quantity: number
+}
+
+export type OrderStatus = 'pending' | 'received'
+
+export interface OrderItem {
+  product_id: string
+  name: string
+  price: number
+  quantity: number
+  size: string
+  colour: string
+  image: string
+}
+
+export interface Order {
+  id: string
+  customer_name: string
+  items: OrderItem[]
+  item_count: number
+  total: number
+  status: OrderStatus
+  created_at: string
+  received_at: string | null
 }

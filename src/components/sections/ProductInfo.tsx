@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ShoppingCart } from 'lucide-react'
+import { Phone, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { OptionChips } from '@/components/ui/OptionChips'
 import { QuantityStepper } from '@/components/ui/QuantityStepper'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import { CATEGORIES } from '@/constants/categories'
+import { SITE } from '@/constants/site'
 import { useCart } from '@/hooks/use-cart'
 import { MAX_LINES } from '@/lib/cart'
 import { siteOrigin } from '@/lib/site-url'
-import { buildItemMessage } from '@/lib/whatsapp-messages'
 import { formatPrice } from '@/lib/utils'
 import type { Product } from '@/types'
 
@@ -61,7 +61,7 @@ export function ProductInfo({ product }: { product: Product }) {
     if (!added) {
       setNotice('')
       setError(
-        `Your cart is full (${MAX_LINES} different items). Send this order first.`,
+        `Your cart is full (${MAX_LINES} different items). Place this order first.`,
       )
       return
     }
@@ -69,13 +69,6 @@ export function ProductInfo({ product }: { product: Product }) {
     setError('')
     setNotice('Added to your cart.')
   }
-
-  const orderMessage = buildItemMessage({
-    product,
-    size: size ?? undefined,
-    colour: colour ?? undefined,
-    quantity,
-  })
 
   const similarMessage = [
     `Hello, do you have something like the ${product.name}?`,
@@ -150,16 +143,18 @@ export function ProductInfo({ product }: { product: Product }) {
           </>
         ) : (
           <>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" onClick={handleAdd} className="w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="lg" onClick={handleAdd}>
                 <ShoppingCart size={18} />
                 Add to cart
               </Button>
-              <WhatsAppButton
-                message={orderMessage}
-                label="Order this on WhatsApp"
-                className="w-full sm:w-auto"
-              />
+              <a
+                href={`tel:${SITE.phone}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition-colors hover:bg-secondary"
+              >
+                <Phone size={14} />
+                Call to inquire
+              </a>
             </div>
 
             {error && (
@@ -172,7 +167,7 @@ export function ProductInfo({ product }: { product: Product }) {
               <p role="status" className="text-sm font-semibold text-primary">
                 {notice}{' '}
                 <Link to="/cart" className="underline underline-offset-4">
-                  View cart
+                  Go to cart to place your order
                 </Link>
               </p>
             )}
@@ -180,7 +175,8 @@ export function ProductInfo({ product }: { product: Product }) {
         )}
 
         <p className="text-sm text-muted-foreground">
-          We reply on WhatsApp from 8am to 10pm, every day.
+          Orders are placed from your cart. We reply on WhatsApp from 8am to
+          10pm, every day.
         </p>
       </div>
     </div>

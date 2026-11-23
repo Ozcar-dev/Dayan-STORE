@@ -24,6 +24,9 @@ const CustomOrder = lazyPage(() => import("@/pages/CustomOrder"));
 const Wishlist = lazyPage(() => import("@/pages/Wishlist"));
 const Studio = lazyPage(() => import("@/pages/Studio"));
 const Cart = lazyPage(() => import("@/pages/Cart"));
+const Order = lazyPage(() => import("@/pages/Order"));
+const AdminOrders = lazyPage(() => import("@/pages/AdminOrders"));
+const MyOrders = lazyPage(() => import("@/pages/MyOrders"));
 
 // The key makes each route its own loading boundary, so its skeleton always shows.
 function page(
@@ -124,6 +127,16 @@ export const router = createBrowserRouter([
         handle: { title: "Cart" },
       },
       {
+        path: "orders",
+        element: page("orders", MyOrders),
+        handle: { title: "My orders" },
+      },
+      {
+        path: "order/:id",
+        element: page("order", Order),
+        handle: { title: "Your order" },
+      },
+      {
         element: <RequireOwner />,
         children: [
           {
@@ -134,6 +147,15 @@ export const router = createBrowserRouter([
               </Suspense>
             ),
             handle: { title: "Admin" },
+          },
+          {
+            path: `${OWNER_PATH.slice(1)}/orders`,
+            element: (
+              <Suspense key="admin-orders" fallback={<ContentPageSkeleton />}>
+                <AdminOrders />
+              </Suspense>
+            ),
+            handle: { title: "Orders" },
           },
         ],
       },

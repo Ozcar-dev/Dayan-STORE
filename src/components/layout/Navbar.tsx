@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Heart, Menu, ShoppingCart } from 'lucide-react'
+import { Heart, Menu, Package, ShoppingCart } from 'lucide-react'
 import { MobileSidebar } from '@/components/layout/MobileSidebar'
 import { useCart } from '@/hooks/use-cart'
 import { useWishlist } from '@/hooks/use-wishlist'
@@ -52,7 +52,7 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-2">
             <Link
               to="/wishlist"
               aria-label={`Wishlist, ${ids.length} saved`}
@@ -71,6 +71,14 @@ export function Navbar() {
             >
               <ShoppingCart size={24} />
               {count > 0 && <span className={badgeClass}>{count}</span>}
+            </Link>
+
+            <Link
+              to="/orders"
+              aria-label="My orders"
+              className="rounded-full p-2 hover:bg-secondary"
+            >
+              <Package size={24} />
             </Link>
 
             <a

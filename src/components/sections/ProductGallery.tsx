@@ -3,23 +3,22 @@ import { PriceTag } from '@/components/ui/PriceTag'
 import { ProductImage } from '@/components/ui/ProductImage'
 import { StockBadge } from '@/components/ui/StockBadge'
 import { WishlistButton } from '@/components/ui/WishlistButton'
+import { thumbUrl } from '@/lib/image-url'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types'
-import { thumbUrl } from '@/lib/image-url'
-
 
 export function ProductGallery({ product }: { product: Product }) {
   const [active, setActive] = useState(0)
 
   return (
-    <div className="min-w-0 space-y-3">
-      <div className="relative aspect-5/5 md:aspect-square w-full overflow-hidden rounded-2xl border border-border bg-muted">
+    <div className="flex min-w-0 flex-col gap-3 md:h-full">
+      <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-border bg-muted md:aspect-auto md:max-h-[44rem] md:min-h-[24rem] md:flex-1">
         <ProductImage
           src={product.images[active]}
           alt={product.name}
           loading="eager"
           iconSize={56}
-          className="h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute left-3 top-3">
           <StockBadge stock={product.stock} />

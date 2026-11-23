@@ -1,20 +1,20 @@
 import sharp from "sharp";
 
 const SITE_NAME = "The Dayan Store";
-const MAX_ITEMS = 10;
+const MAX_PHOTOS = 10;
 const BACKGROUND = "#fff4ec";
-const PAIR = /^([0-9a-f]{32})x(\d{1,2})$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-interface Entry {
-  id: string;
-  qty: number;
+interface OrderItem {
+  name: string;
+  image: string;
 }
 
-interface ProductRow {
-  id: string;
-  name: string;
-  price: number;
-  images: string[];
+interface OrderRow {
+  customer_name: string;
+  items: OrderItem[];
+  item_count: number;
+  total: number;
 }
 
 function escapeHtml(text: string) {
@@ -33,51 +33,32 @@ function getOrigin(request: Request) {
   return host ? `${proto}://${host}` : new URL(request.url).origin;
 }
 
-function getRaw(request: Request) {
+function getId(request: Request) {
   const url = new URL(request.url);
-  const fromQuery = url.searchParams.get("ids");
+  const fromQuery = url.searchParams.get("id");
   if (fromQuery) return fromQuery;
   return url.pathname.match(/\/o\/([^/?#]+)/)?.[1] ?? null;
 }
 
-function parse(raw: string | null): Entry[] {
-  if (!raw) return [];
-
-  const entries: Entry[] = [];
-  for (const part of raw.split(".")) {
-    const match = part.match(PAIR);
-    if (!match) continue;
-
-    const hex = match[1].toLowerCase();
-    entries.push({
-      id: `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`,
-      qty: Math.max(1, Number(match[2])),
-    });
-
-    if (entries.length === MAX_ITEMS) break;
-  }
-
-  return entries;
-}
-
-async function loadProducts(entries: Entry[]): Promise<ProductRow[]> {
+async function loadOrder(id: string): Promise<OrderRow | null> {
   const base = process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const key =
     process.env.VITE_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
 
-  if (!base || entries.length === 0 || !key) return [];
+  if (!base || !key) return null;
 
   try {
-    const ids = entries.map((entry) => entry.id).join(",");
-    const response = await fetch(
-      `${base}/rest/v1/products?id=in.(${ids})&select=id,name,price,images`,
-      { headers: { apikey: key } },
-    );
-    if (!response.ok) return [];
+    const response = await fetch(`${base}/rest/v1/rpc/get_order`, {
+      method: "POST",
+      headers: { apikey: key, "Content-Type": "application/json" },
+      body: JSON.stringify({ p_id: id }),
+    });
+    if (!response.ok) return null;
 
-    return (await response.json()) as ProductRow[];
+    const rows = (await response.json()) as OrderRow[];
+    return rows[0] ?? null;
   } catch {
-    return [];
+    return null;
   }
 }
 
@@ -91,9 +72,7 @@ async function fetchBuffer(url: string) {
   }
 }
 
-async function loadPhoto(main: string | undefined) {
-  if (!main) return null;
-
+async function loadPhoto(main: string) {
   const small = main.replace(/\.(webp|jpg)$/, "-sm.$1");
   if (small !== main) {
     const buffer = await fetchBuffer(small);
@@ -147,29 +126,63 @@ async function collage(photos: Buffer[]) {
 export default {
   async fetch(request: Request) {
     const origin = getOrigin(request);
-    const raw = getRaw(request);
-    const entries = parse(raw);
-    const rows = await loadProducts(entries);
+    const id = getId(request);
 
-    const products = entries
-      .map((entry) => {
-        const row = rows.find((item) => item.id === entry.id);
-        return row ? { row, qty: entry.qty } : null;
-      })
-      .filter(
-        (item): item is { row: ProductRow; qty: number } => item !== null,
-      );
+    if (!id || !UUID.test(id)) {
+      return Response.redirect(`${origin}/shop`, 302);
+    }
 
-    if (!raw || products.length === 0) {
+    const order = await loadOrder(id);
+    if (!order) {
       return Response.redirect(`${origin}/shop`, 302);
     }
 
     const url = new URL(request.url);
 
+    // if (url.searchParams.get('image') === '1') {
+    //   const sources = Array.from(
+    //     new Set(order.items.map((item) => item.image).filter(Boolean)),
+    //   ).slice(0, MAX_PHOTOS)
+
+    //   const loaded = await Promise.all(sources.map(loadPhoto))
+    //   const photos = loaded.filter(
+    //     (item): item is NonNullable<typeof item> => item !== null,
+    //   );
+
+    //   if (photos.length === 0) {
+    //     return new Response('No photos', { status: 404 })
+    //   }
+
+    //   const jpeg = await collage(photos)
+
+    //   return new Response(new Uint8Array(jpeg), {
+    //     headers: {
+    //       'Content-Type': 'image/jpeg',
+    //       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+    //     },
+    //   })
+    // }
     if (url.searchParams.get("image") === "1") {
-      const loaded = await Promise.all(
-        products.map(({ row }) => loadPhoto(row.images?.[0])),
-      );
+      const sources = Array.from(
+        new Set(order.items.map((item) => item.image).filter(Boolean)),
+      ).slice(0, MAX_PHOTOS);
+
+      if (sources.length === 1) {
+        const share = sources[0].replace(/\.(webp|jpg)$/, "-share.jpg");
+        const single = share !== sources[0] ? await fetchBuffer(share) : null;
+
+        if (single) {
+          return new Response(new Uint8Array(single), {
+            headers: {
+              "Content-Type": "image/jpeg",
+              "Cache-Control":
+                "public, s-maxage=3600, stale-while-revalidate=86400",
+            },
+          });
+        }
+      }
+
+      const loaded = await Promise.all(sources.map(loadPhoto));
       const photos = loaded.filter(
         (item): item is NonNullable<typeof item> => item !== null,
       );
@@ -189,25 +202,21 @@ export default {
       });
     }
 
-    const total = products.reduce(
-      (sum, { row, qty }) => sum + row.price * qty,
-      0,
-    );
     const money = new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
       maximumFractionDigits: 0,
-    }).format(total);
+    }).format(order.total);
 
-    const title = `Order: ${products.length} items - ${money}`;
-    const names = products
-      .map(({ row }) => row.name.charAt(0).toUpperCase() + row.name.slice(1))
-      .join(", ");
-    const summary = names.slice(0, 150);
+    const title = `Order from ${order.customer_name} - ${order.item_count} item(s) - ${money}`;
+    const summary = order.items
+      .map((item) => item.name.charAt(0).toUpperCase() + item.name.slice(1))
+      .join(", ")
+      .slice(0, 150);
 
-    const self = `${origin}/o/${raw}`;
-    const image = `${origin}/api/order?ids=${encodeURIComponent(raw)}&image=1`;
-    const target = `${origin}/shop`;
+    const self = `${origin}/o/${id}`;
+    const image = `${origin}/api/order?id=${id}&image=1`;
+    const target = `${origin}/order/${id}`;
 
     const html = `<!doctype html>
 <html lang="en">
@@ -216,6 +225,7 @@ export default {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(title)} | ${SITE_NAME}</title>
 <meta name="description" content="${escapeHtml(summary)}">
+<meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${SITE_NAME}">
 <meta property="og:title" content="${escapeHtml(title)}">
@@ -228,7 +238,7 @@ export default {
 <noscript><meta http-equiv="refresh" content="0;url=${escapeHtml(target)}"></noscript>
 </head>
 <body>
-<p><a href="${escapeHtml(target)}">Open the shop</a></p>
+<p><a href="${escapeHtml(target)}">Open the order</a></p>
 <script>location.replace(${JSON.stringify(target).replace(/</g, "\\u003c")})</script>
 </body>
 </html>`;

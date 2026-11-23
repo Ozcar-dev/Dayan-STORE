@@ -1,56 +1,57 @@
-import type { ComponentType } from 'react'
-import { Clock, RotateCcw, Truck, Wallet } from 'lucide-react'
-import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
-import { DELIVERY, ORDER_STEPS } from '@/constants/delivery'
-import { SITE } from '@/constants/site'
+import type { ComponentType } from "react";
+import { Clock, RotateCcw, Truck, Wallet } from "lucide-react";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { DELIVERY } from "@/constants/delivery";
+import { OrderSteps } from "@/components/sections/OrderSteps";
+import { SITE } from "@/constants/site";
 
 interface Fact {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 interface Block {
-  title: string
-  icon: ComponentType<{ size?: number; className?: string }>
-  facts: Fact[]
+  title: string;
+  icon: ComponentType<{ size?: number; className?: string }>;
+  facts: Fact[];
 }
 
 const BLOCKS: Block[] = [
   {
-    title: 'Delivery',
+    title: "Delivery",
     icon: Truck,
     facts: [
-      { label: 'Where', value: DELIVERY.coverage },
-      { label: 'Courier', value: DELIVERY.courier },
-      { label: 'Delivery time', value: DELIVERY.deliveryTime },
-      { label: 'Delivery fees', value: DELIVERY.fees },
+      { label: "Where", value: DELIVERY.coverage },
+      { label: "Courier", value: DELIVERY.courier },
+      { label: "Delivery time", value: DELIVERY.deliveryTime },
+      { label: "Delivery fees", value: DELIVERY.fees },
     ],
   },
   {
-    title: 'Preparing your order',
+    title: "Preparing your order",
     icon: Clock,
     facts: [
-      { label: 'Ready in', value: DELIVERY.prepTime },
-      { label: 'We are online', value: SITE.hours },
+      { label: "Ready in", value: DELIVERY.prepTime },
+      { label: "We are online", value: SITE.hours },
     ],
   },
   {
-    title: 'Payment',
+    title: "Payment",
     icon: Wallet,
     facts: [
-      { label: 'Methods', value: DELIVERY.paymentMethods },
-      { label: 'Details', value: DELIVERY.paymentNote },
+      { label: "Methods", value: DELIVERY.paymentMethods },
+      { label: "Details", value: DELIVERY.paymentNote },
     ],
   },
   {
-    title: 'Returns',
+    title: "Returns",
     icon: RotateCcw,
     facts: [
-      { label: 'Refunds', value: DELIVERY.returns },
-      { label: 'If it does not fit', value: DELIVERY.sizeExchange },
+      { label: "Refunds", value: DELIVERY.returns },
+      { label: "If it does not fit", value: DELIVERY.sizeExchange },
     ],
   },
-]
+];
 
 export function DeliveryDetails() {
   return (
@@ -80,21 +81,12 @@ export function DeliveryDetails() {
       </div>
 
       <section>
-        <h2 className="text-3xl font-semibold text-primary">How to order</h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {ORDER_STEPS.map((step, index) => (
-            <li
-              key={step.title}
-              className="min-w-0 rounded-2xl border border-border bg-card p-5"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary font-heading font-semibold text-primary-foreground">
-                {index + 1}
-              </span>
-              <p className="mt-3 font-heading font-semibold">{step.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{step.text}</p>
-            </li>
-          ))}
-        </ol>
+        <h2 className="text-center text-3xl font-semibold text-primary">
+          How to order
+        </h2>
+        <div className="mt-6">
+          <OrderSteps />
+        </div>
       </section>
 
       <section className="rounded-2xl bg-secondary p-6 text-center">
@@ -108,5 +100,5 @@ export function DeliveryDetails() {
         />
       </section>
     </div>
-  )
+  );
 }
