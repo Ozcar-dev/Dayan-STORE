@@ -18,11 +18,16 @@ export function WishlistButton({ productId, className }: WishlistButtonProps) {
       aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
       onClick={() => toggle(productId)}
       className={cn(
-        'flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm transition-colors hover:bg-background',
+        'flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm transition-transform hover:scale-110 active:scale-90',
         className,
       )}
     >
-      <Heart size={20} fill={saved ? 'currentColor' : 'none'} />
+      <Heart
+        key={saved ? 'saved' : 'empty'}
+        size={20}
+        fill={saved ? 'currentColor' : 'none'}
+        className={saved ? 'animate-pop' : undefined}
+      />
     </button>
   )
 }

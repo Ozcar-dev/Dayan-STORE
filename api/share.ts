@@ -1,6 +1,8 @@
-const SITE_NAME = 'The Dayan Store'
+const SITE_NAME = 'Dayanstore'
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const BOTS =
+  /(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|discordbot|linkedinbot|pinterest|skypeuripreview|embedly|vkshare|googlebot|bingbot|crawler|spider|preview)/i
 
 interface ProductRow {
   name: string
@@ -31,6 +33,13 @@ function getId(request: Request) {
   const fromQuery = url.searchParams.get('id')
   if (fromQuery) return fromQuery
   return url.pathname.match(/\/p\/([^/?#]+)/)?.[1] ?? null
+}
+
+function go(url: string) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: url, 'Cache-Control': 'no-store' },
+  })
 }
 
 async function exists(url: string) {
@@ -68,14 +77,13 @@ export default {
     const origin = getOrigin(request)
     const id = getId(request)
 
-    if (!id || !UUID.test(id)) {
-      return Response.redirect(`${origin}/shop`, 302)
-    }
+    if (!id || !UUID.test(id)) return go(`${origin}/shop`)
+
+    const agent = request.headers.get('user-agent') ?? ''
+    if (!BOTS.test(agent)) return go(`${origin}/shop/${id}`)
 
     const product = await loadProduct(id)
-    if (!product) {
-      return Response.redirect(`${origin}/shop`, 302)
-    }
+    if (!product) return go(`${origin}/shop`)
 
     const name = product.name.charAt(0).toUpperCase() + product.name.slice(1)
     const price = new Intl.NumberFormat('en-NG', {
@@ -113,18 +121,16 @@ export default {
 <meta property="og:description" content="${escapeHtml(summary)}">
 <meta property="og:url" content="${escapeHtml(self)}">
 ${image ? `<meta property="og:image" content="${escapeHtml(image)}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">` : ''}
-<noscript><meta http-equiv="refresh" content="0;url=${escapeHtml(target)}"></noscript>
 </head>
 <body>
 <p><a href="${escapeHtml(target)}">Open ${escapeHtml(name)}</a></p>
-<script>location.replace(${JSON.stringify(target).replace(/</g, '\\u003c')})</script>
 </body>
 </html>`
 
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+        'Cache-Control': 'no-store',
       },
     })
   },

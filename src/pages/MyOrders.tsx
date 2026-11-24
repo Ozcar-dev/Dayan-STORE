@@ -2,10 +2,10 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { CheckCircle2, Clock, Package } from 'lucide-react'
+import { MyOrderCardSkeleton } from '@/components/sections/MyOrderCardSkeleton'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { ProductImage } from '@/components/ui/ProductImage'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useNoindex } from '@/hooks/use-noindex'
 import { formatWhen } from '@/lib/format-date'
 import { thumbUrl } from '@/lib/image-url'
@@ -69,16 +69,16 @@ export default function MyOrders() {
     <>
       <PageHeader
         title="My orders"
-        subtitle="Orders you placed on this device."
+        subtitle="See where each of your orders stands."
       />
 
       <div className="mx-auto w-full max-w-3xl space-y-4 px-4 py-10 sm:px-6">
         {ids.length === 0 ? (
-          <EmptyState text="When you place an order, it will appear here." />
+          <EmptyState text="When you place an order, it will show up here." />
         ) : query.isPending ? (
-          <div role="status" aria-label="Loading orders" className="space-y-3">
+          <div role="status" aria-label="Loading orders" className="space-y-4">
             {Array.from({ length: 3 }, (_, index) => (
-              <Skeleton key={index} className="h-36 rounded-2xl" />
+              <MyOrderCardSkeleton key={index} />
             ))}
           </div>
         ) : query.isError ? (
@@ -98,7 +98,8 @@ export default function MyOrders() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground">
-              Orders are saved on this device. This page updates by itself.
+              Pending means we have not confirmed it yet. Received means we
+              have your order. Statuses update by themselves.
             </p>
 
             <ul className="space-y-4">

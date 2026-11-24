@@ -18,21 +18,21 @@ export function DeliveryNote({ slot, className }: DeliveryNoteProps) {
     <div
       aria-hidden="true"
       className={cn(
-        'flex h-10 items-start gap-1.5 overflow-hidden border-t border-border pt-2 text-[0.7rem] leading-snug text-muted-foreground',
+        'flex h-10 items-start gap-1.5 overflow-hidden border-t border-border pt-2 text-[0.65rem] leading-snug text-muted-foreground sm:text-[0.7rem]',
         className,
       )}
     >
-      <Truck size={12} className="mt-0.5 shrink-0 text-primary" />
+      <Truck size={12} className="mt-0.5 hidden shrink-0 text-primary sm:block" />
       <div className="grid min-w-0 flex-1">
         <span
           key={`out-${tick}`}
-          className="col-start-1 row-start-1 animate-note-out"
+          className="col-start-1 row-start-1 line-clamp-2 animate-note-out"
         >
           {previous}
         </span>
         <span
           key={`in-${tick}`}
-          className="col-start-1 row-start-1 animate-note-in"
+          className="col-start-1 row-start-1 line-clamp-2 animate-note-in"
         >
           {current}
         </span>

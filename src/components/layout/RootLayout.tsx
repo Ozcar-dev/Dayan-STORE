@@ -1,46 +1,46 @@
-import { useEffect } from 'react'
-import { Outlet, useLocation, useMatches } from 'react-router-dom'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
-import { FloatingWhatsApp } from '@/components/ui/FloatingWhatsApp'
-import { SITE } from '@/constants/site'
+import { useEffect } from "react";
+import { Outlet, useLocation, useMatches } from "react-router-dom";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
+import { SITE } from "@/constants/site";
 
 interface RouteHandle {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
 }
 
 const DEFAULT_DESCRIPTION =
-  "The Dayan Store: women's fashion, bags and accessories in Lagos. Order easily on WhatsApp."
+  "The Dayan Store: women's fashion, bags and accessories in Lagos. Order easily on WhatsApp.";
 
 export function RootLayout() {
-  const { pathname, hash, key } = useLocation()
-  const matches = useMatches()
-  const handle = matches[matches.length - 1]?.handle as RouteHandle | undefined
+  const { pathname, hash, key } = useLocation();
+  const matches = useMatches();
+  const handle = matches[matches.length - 1]?.handle as RouteHandle | undefined;
 
   useEffect(() => {
     if (hash) {
-      const element = document.getElementById(hash.slice(1))
+      const element = document.getElementById(hash.slice(1));
       if (element) {
-        element.scrollIntoView()
-        return
+        element.scrollIntoView();
+        return;
       }
     }
-    window.scrollTo(0, 0)
-  }, [pathname, hash, key])
+    window.scrollTo(0, 0);
+  }, [pathname, hash, key]);
 
   useEffect(() => {
-    if (!handle?.title) return
+    if (!handle?.title) return;
 
     document.title =
-      pathname === '/'
+      pathname === "/"
         ? `${SITE.name} | ${SITE.tagline}`
-        : `${handle.title} | ${SITE.name}`
+        : `${handle.title} | ${SITE.name}`;
 
     document
       .querySelector('meta[name="description"]')
-      ?.setAttribute('content', handle.description ?? DEFAULT_DESCRIPTION)
-  }, [handle, pathname])
+      ?.setAttribute("content", handle.description ?? DEFAULT_DESCRIPTION);
+  }, [handle, pathname]);
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-clip">
@@ -51,11 +51,11 @@ export function RootLayout() {
         Skip to content
       </a>
       <Navbar />
-      <main id="main" className="flex-1">
+      <main id="main" key={pathname} className="flex-1 animate-page-in">
         <Outlet />
       </main>
       <Footer />
       <FloatingWhatsApp />
     </div>
-  )
+  );
 }

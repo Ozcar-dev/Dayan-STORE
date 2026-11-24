@@ -4,6 +4,9 @@ const SITE_NAME = "The Dayan Store";
 const MAX_PHOTOS = 10;
 const BACKGROUND = "#fff4ec";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const BOTS =
+  /(whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|discordbot|linkedinbot|pinterest|skypeuripreview|embedly|vkshare|googlebot|bingbot|crawler|spider|preview)/i;
+const IMAGE_CACHE = "public, s-maxage=3600, stale-while-revalidate=86400";
 
 interface OrderItem {
   name: string;
@@ -38,6 +41,13 @@ function getId(request: Request) {
   const fromQuery = url.searchParams.get("id");
   if (fromQuery) return fromQuery;
   return url.pathname.match(/\/o\/([^/?#]+)/)?.[1] ?? null;
+}
+
+function go(url: string) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: url, "Cache-Control": "no-store" },
+  });
 }
 
 async function loadOrder(id: string): Promise<OrderRow | null> {
@@ -123,46 +133,36 @@ async function collage(photos: Buffer[]) {
     .toBuffer();
 }
 
+function jpegResponse(data: Uint8Array) {
+  return new Response(data, {
+    headers: { "Content-Type": "image/jpeg", "Cache-Control": IMAGE_CACHE },
+  });
+}
+
 export default {
   async fetch(request: Request) {
     const origin = getOrigin(request);
     const id = getId(request);
 
-    if (!id || !UUID.test(id)) {
-      return Response.redirect(`${origin}/shop`, 302);
+    if (!id || !UUID.test(id)) return go(`${origin}/shop`);
+
+    const url = new URL(request.url);
+    const wantsImage = url.searchParams.get("image") === "1";
+    const agent = request.headers.get("user-agent") ?? "";
+
+    if (!wantsImage && !BOTS.test(agent)) {
+      return go(`${origin}/order/${id}`);
     }
 
     const order = await loadOrder(id);
+
     if (!order) {
-      return Response.redirect(`${origin}/shop`, 302);
+      return wantsImage
+        ? new Response("Not found", { status: 404 })
+        : go(`${origin}/shop`);
     }
 
-    const url = new URL(request.url);
-
-    // if (url.searchParams.get('image') === '1') {
-    //   const sources = Array.from(
-    //     new Set(order.items.map((item) => item.image).filter(Boolean)),
-    //   ).slice(0, MAX_PHOTOS)
-
-    //   const loaded = await Promise.all(sources.map(loadPhoto))
-    //   const photos = loaded.filter(
-    //     (item): item is NonNullable<typeof item> => item !== null,
-    //   );
-
-    //   if (photos.length === 0) {
-    //     return new Response('No photos', { status: 404 })
-    //   }
-
-    //   const jpeg = await collage(photos)
-
-    //   return new Response(new Uint8Array(jpeg), {
-    //     headers: {
-    //       'Content-Type': 'image/jpeg',
-    //       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-    //     },
-    //   })
-    // }
-    if (url.searchParams.get("image") === "1") {
+    if (wantsImage) {
       const sources = Array.from(
         new Set(order.items.map((item) => item.image).filter(Boolean)),
       ).slice(0, MAX_PHOTOS);
@@ -170,16 +170,7 @@ export default {
       if (sources.length === 1) {
         const share = sources[0].replace(/\.(webp|jpg)$/, "-share.jpg");
         const single = share !== sources[0] ? await fetchBuffer(share) : null;
-
-        if (single) {
-          return new Response(new Uint8Array(single), {
-            headers: {
-              "Content-Type": "image/jpeg",
-              "Cache-Control":
-                "public, s-maxage=3600, stale-while-revalidate=86400",
-            },
-          });
-        }
+        if (single) return jpegResponse(new Uint8Array(single));
       }
 
       const loaded = await Promise.all(sources.map(loadPhoto));
@@ -191,15 +182,7 @@ export default {
         return new Response("No photos", { status: 404 });
       }
 
-      const jpeg = await collage(photos);
-
-      return new Response(new Uint8Array(jpeg), {
-        headers: {
-          "Content-Type": "image/jpeg",
-          "Cache-Control":
-            "public, s-maxage=3600, stale-while-revalidate=86400",
-        },
-      });
+      return jpegResponse(new Uint8Array(await collage(photos)));
     }
 
     const money = new Intl.NumberFormat("en-NG", {
@@ -235,19 +218,41 @@ export default {
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<noscript><meta http-equiv="refresh" content="0;url=${escapeHtml(target)}"></noscript>
 </head>
 <body>
 <p><a href="${escapeHtml(target)}">Open the order</a></p>
-<script>location.replace(${JSON.stringify(target).replace(/</g, "\\u003c")})</script>
 </body>
 </html>`;
 
     return new Response(html, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+        "Cache-Control": "no-store",
       },
     });
   },
 };
+
+// if (url.searchParams.get('image') === '1') {
+//   const sources = Array.from(
+//     new Set(order.items.map((item) => item.image).filter(Boolean)),
+//   ).slice(0, MAX_PHOTOS)
+
+//   const loaded = await Promise.all(sources.map(loadPhoto))
+// const photos = loaded.filter(
+//   (item): item is NonNullable<typeof item> => item !== null,
+// );
+
+//   if (photos.length === 0) {
+//     return new Response('No photos', { status: 404 })
+//   }
+
+//   const jpeg = await collage(photos)
+
+//   return new Response(new Uint8Array(jpeg), {
+//     headers: {
+//       'Content-Type': 'image/jpeg',
+//       'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+//     },
+//   })
+// }

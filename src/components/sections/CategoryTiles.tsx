@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Reveal } from '@/components/ui/Reveal'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CATEGORIES } from '@/constants/categories'
 import type { Product } from '@/types'
@@ -17,28 +18,29 @@ export function CategoryTiles({ products, loading }: CategoryTilesProps) {
       <h2 className="text-3xl font-semibold text-primary">Shop by category</h2>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
-        {CATEGORIES.map((category) => {
+        {CATEGORIES.map((category, index) => {
           const count = products.filter(
             (product) => product.category === category.slug,
           ).length
 
           return (
-            <Link
-              key={category.slug}
-              to={`/shop?category=${category.slug}`}
-              className="group min-w-0 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary hover:bg-secondary"
-            >
-              <p className="font-heading text-lg font-semibold group-hover:text-primary">
-                {category.name}
-              </p>
-              {loading ? (
-                <Skeleton className="mt-2 h-4 w-16" />
-              ) : (
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {count} {count === 1 ? 'item' : 'items'}
+            <Reveal key={category.slug} className="h-full" delay={index * 70}>
+              <Link
+                to={`/shop?category=${category.slug}`}
+                className="group block h-full min-w-0 rounded-2xl border border-border bg-card p-5 transition duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-secondary hover:shadow-md"
+              >
+                <p className="font-heading text-lg font-semibold group-hover:text-primary">
+                  {category.name}
                 </p>
-              )}
-            </Link>
+                {loading ? (
+                  <Skeleton className="mt-2 h-4 w-16" />
+                ) : (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {count} {count === 1 ? 'item' : 'items'}
+                  </p>
+                )}
+              </Link>
+            </Reveal>
           )
         })}
       </div>

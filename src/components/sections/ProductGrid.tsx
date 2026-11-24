@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/ui/ProductCard'
+import { Reveal } from '@/components/ui/Reveal'
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton'
 import type { Product } from '@/types'
 
@@ -34,9 +35,11 @@ export function ProductGrid({ products, query, onClear }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product, index) => (
-        <ProductCard key={product.id} product={product} noteSlot={index} />
+        <Reveal key={product.id} className="h-full" delay={(index % 8) * 60}>
+          <ProductCard product={product} noteSlot={index} />
+        </Reveal>
       ))}
     </div>
   )

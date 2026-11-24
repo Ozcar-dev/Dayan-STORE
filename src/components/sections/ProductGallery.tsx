@@ -12,7 +12,7 @@ export function ProductGallery({ product }: { product: Product }) {
 
   return (
     <div className="flex min-w-0 flex-col gap-3 md:h-full">
-      <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-border bg-muted md:aspect-auto md:max-h-[44rem] md:min-h-[24rem] md:flex-1">
+      <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl border border-border bg-muted md:aspect-auto md:max-h-176 md:min-h-96 md:flex-1">
         <ProductImage
           src={product.images[active]}
           alt={product.name}

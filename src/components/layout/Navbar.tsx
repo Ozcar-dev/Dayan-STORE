@@ -1,26 +1,26 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { Heart, Menu, Package, ShoppingCart } from 'lucide-react'
-import { MobileSidebar } from '@/components/layout/MobileSidebar'
-import { useCart } from '@/hooks/use-cart'
-import { useWishlist } from '@/hooks/use-wishlist'
-import { cn, getWhatsAppLink } from '@/lib/utils'
-import { SITE } from '@/constants/site'
-import { NAV_LINKS } from '@/constants/navigation'
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Heart, Menu, Package, ShoppingCart } from "lucide-react";
+import { MobileSidebar } from "@/components/layout/MobileSidebar";
+import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/hooks/use-wishlist";
+import { cn, getWhatsAppLink } from "@/lib/utils";
+import { SITE } from "@/constants/site";
+import { NAV_LINKS } from "@/constants/navigation";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:bg-secondary',
-    isActive && 'bg-secondary text-primary',
-  )
+    "rounded-full px-3 py-2 text-sm font-semibold transition-colors hover:bg-secondary",
+    isActive && "bg-secondary text-primary",
+  );
 
 const badgeClass =
-  'absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground'
+  "absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground";
 
 export function Navbar() {
-  const [open, setOpen] = useState(false)
-  const { ids } = useWishlist()
-  const { count } = useCart()
+  const [open, setOpen] = useState(false);
+  const { ids } = useWishlist();
+  const { count } = useCart();
 
   return (
     <>
@@ -60,7 +60,12 @@ export function Navbar() {
             >
               <Heart size={24} />
               {ids.length > 0 && (
-                <span className={badgeClass}>{ids.length}</span>
+                <span
+                  key={ids.length}
+                  className={cn(badgeClass, "animate-pop")}
+                >
+                  {ids.length}
+                </span>
               )}
             </Link>
 
@@ -70,7 +75,11 @@ export function Navbar() {
               className="relative rounded-full p-2 hover:bg-secondary"
             >
               <ShoppingCart size={24} />
-              {count > 0 && <span className={badgeClass}>{count}</span>}
+              {count > 0 && (
+                <span key={count} className={cn(badgeClass, "animate-pop")}>
+                  {count}
+                </span>
+              )}
             </Link>
 
             <Link
@@ -82,7 +91,7 @@ export function Navbar() {
             </Link>
 
             <a
-              href={getWhatsAppLink('Hello, I would like to make an enquiry.')}
+              href={getWhatsAppLink("Hello, I would like to make an enquiry.")}
               target="_blank"
               rel="noreferrer"
               className="hidden rounded-full bg-whatsapp px-4 py-2 text-sm font-semibold text-whatsapp-foreground sm:inline-block"
@@ -95,5 +104,5 @@ export function Navbar() {
 
       <MobileSidebar open={open} onClose={() => setOpen(false)} />
     </>
-  )
+  );
 }

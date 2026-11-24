@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Skeleton } from "@/components/ui/skeleton";
+import { CartBodySkeleton } from "@/components/sections/CartBodySkeleton";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { useCart } from "@/hooks/use-cart";
 import { useProducts } from "@/hooks/use-products";
@@ -96,7 +96,7 @@ export default function Cart() {
         items.map(({ line }) => line),
       );
       recordOrder(orderId);
-      
+
       const message = buildOrderMessage(trimmed, items, orderId);
 
       clear();
@@ -155,11 +155,7 @@ export default function Cart() {
 
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         {isLoading ? (
-          <div role="status" aria-label="Loading cart" className="space-y-3">
-            {Array.from({ length: 3 }, (_, index) => (
-              <Skeleton key={index} className="h-28 rounded-2xl" />
-            ))}
-          </div>
+          <CartBodySkeleton />
         ) : isError ? (
           <ProductsError onRetry={() => void refetch()} />
         ) : lines.length === 0 ? (

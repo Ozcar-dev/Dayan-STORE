@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { CheckCircle2, Clock } from 'lucide-react'
-import { ContentPageSkeleton } from '@/components/sections/ContentPageSkeleton'
+import { OrderSkeleton } from '@/components/sections/OrderSkeleton'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { ProductImage } from '@/components/ui/ProductImage'
@@ -34,7 +34,7 @@ export default function Order() {
       current.state.data?.status === 'received' ? false : 15_000,
   })
 
-  if (valid && query.isPending) return <ContentPageSkeleton />
+  if (valid && query.isPending) return <OrderSkeleton />
 
   if (valid && query.isError) {
     return (

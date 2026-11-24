@@ -1,20 +1,21 @@
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { ProductGridSkeleton } from "@/components/sections/ProductGridSkeleton";
-import { ProductCard } from "@/components/ui/ProductCard";
-import type { Product } from "@/types";
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
+import { ProductGridSkeleton } from '@/components/sections/ProductGridSkeleton'
+import { ProductCard } from '@/components/ui/ProductCard'
+import { Reveal } from '@/components/ui/Reveal'
+import type { Product } from '@/types'
 
 interface FeaturedProductsProps {
-  products: Product[];
-  loading: boolean;
+  products: Product[]
+  loading: boolean
 }
 
 export function FeaturedProducts({ products, loading }: FeaturedProductsProps) {
   const items = products
-    .filter((product) => product.stock !== "sold-out")
-    .slice(0, 4);
+    .filter((product) => product.stock !== 'sold-out')
+    .slice(0, 4)
 
-  if (!loading && items.length === 0) return null;
+  if (!loading && items.length === 0) return null
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
@@ -35,17 +36,19 @@ export function FeaturedProducts({ products, loading }: FeaturedProductsProps) {
         {loading ? (
           <ProductGridSkeleton count={4} className="lg:grid-cols-4" />
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {items.map((product, index) => (
-              <ProductCard
+              <Reveal
                 key={product.id}
-                product={product}
-                noteSlot={index}
-              />
+                className="h-full"
+                delay={index * 80}
+              >
+                <ProductCard product={product} noteSlot={index} />
+              </Reveal>
             ))}
           </div>
         )}
       </div>
     </section>
-  );
+  )
 }

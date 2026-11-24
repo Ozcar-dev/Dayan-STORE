@@ -4,6 +4,8 @@ import { ProductGridSkeleton } from '@/components/sections/ProductGridSkeleton'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { ProductCard } from '@/components/ui/ProductCard'
+import { Reveal } from '@/components/ui/Reveal'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useProducts } from '@/hooks/use-products'
 import { useWishlist } from '@/hooks/use-wishlist'
 
@@ -17,12 +19,18 @@ export default function Wishlist() {
     <>
       <PageHeader
         title="Your wishlist"
-        subtitle="Items you saved on this device."
+        subtitle="Pieces you have saved to come back to."
       />
 
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         {isLoading ? (
-          <ProductGridSkeleton count={4} />
+          <div role="status" aria-label="Loading wishlist">
+            <div className="flex items-center justify-between gap-3">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-9 w-24 rounded-full" />
+            </div>
+            <ProductGridSkeleton count={4} className="mt-6" />
+          </div>
         ) : saved.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card px-4 py-12 text-center">
             <Heart size={36} className="mx-auto text-primary" />
@@ -50,13 +58,15 @@ export default function Wishlist() {
               </Button>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
               {saved.map((product, index) => (
-                <ProductCard
+                <Reveal
                   key={product.id}
-                  product={product}
-                  noteSlot={index}
-                />
+                  className="h-full"
+                  delay={(index % 8) * 60}
+                >
+                  <ProductCard product={product} noteSlot={index} />
+                </Reveal>
               ))}
             </div>
           </>
